@@ -7,12 +7,9 @@ class AccountsPage:
 
     # Open Add Account dialog
         self.add_account_btn = page.get_by_role( "button",name="Add Account")
-
-    # Form fields (using placeholders)
-    #self.account_name_input = page.get_by_placeholder("Account Name")
+   
         self.account_name_input = page.get_by_test_id("account-form-name-input")
 
-    #self.balance_input = page.get_by_placeholder("Starting Balance")
         self.balance_input = page.locator('input[name="account_balance_field"]')
 
     # Select an option
@@ -33,7 +30,9 @@ class AccountsPage:
 
     # Fill form
         self.account_name_input.fill(account_name)
-        self.account_type_dropdown.select_option(account_type)
+        self.account_type_dropdown.click()
+        self.page.get_by_text(account_type, exact=True).click()
+        
         self.balance_input.fill(starting_balance)
 
     # Accept terms
