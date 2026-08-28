@@ -31,12 +31,11 @@ class AccountsPage:
     # Fill form
         self.account_name_input.fill(account_name)
         self.account_type_dropdown.click()
-        self.page.get_by_text(account_type, exact=True).click()
-        
+        self.page.get_by_role("option", name="Checking").click()
         self.balance_input.fill(starting_balance)
 
     # Accept terms
-        self.terms_checkbox.check()
+        self.page.get_by_text("I accept the terms and conditions").click()
 
     # Screenshot before submit
         self.page.screenshot(path="before_submit.png",full_page=True)

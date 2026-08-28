@@ -2,33 +2,73 @@ from playwright.sync_api import Page, expect
 
 
 class TransferPage:
-
     def __init__(self, page: Page):
         self.page = page
 
-        self.from_account_dropdown = page.get_by_test_id("transfer-from-select")
-        self.to_account_dropdown = page.get_by_test_id("transfer-to-select")
+        self.transfer_heading = page.get_by_role(
+            "heading",
+            name="Transfer Money"
+        )
 
-        self.amount_input = page.get_by_test_id("transfer-amount-input)
+        self.from_account = page.locator(
+            "#transfer-from-trigger"
+        )
 
-        self.transfer_btn = page.get_by_role("button",name="Transfer Money")
+        self.to_account = page.locator(
+            "#transfer-to-trigger"
+        )
 
-    def transfer_money(self,from_account: str,to_account: str, amount: str):
+        self.amount = page.get_by_label("Amount")
 
-        # From Account
-        self.from_account_dropdown.click()
-        self.page.get_by_text(from_account,exact=True).click()
+        self.today_radio = page.get_by_label("Today")
 
-        # To Account
-        self.to_account_dropdown.click()
-        self.page.get_by_text(to_account,exact=True).click()
+        self.review_transfer_button = page.get_by_role(
+            "button",
+            name="Review Transfer"
+        )
 
-        # Amount
-        self.amount_input.fill(amount)
+    def open(self):
+        self.page.goto(
+            "https://qaplayground.com/bank/transfer",
+            wait_until="domcontentloaded"
+        )
 
-        # Transfer
-        self.transfer_btn.click()
+    def verify_transfer_page(self):
+        expect(self.transfer_heading).to_be_visible()
 
-    def verify_transfer_success(self):
+    def select_from_account(self, account_name):
+        self.from_account.click()
 
-        expect(self.page.get_by_text("Transfer successful")).to_be_visible(timeout=10000)
+        self.page.get_by_role(
+            "option",
+            name=account_name
+        ).click()
+
+    def select_to_account(self, account_name):
+        self.to_account.click()
+
+        self.page.get_by_role(
+            "option",
+            name=account_name
+        ).click()
+
+    def enter_amount(self, amount):
+        self.amount.fill(str(amount))
+
+    def select_today(self):
+        self.today_radio.check()
+
+    def click_review_transfer(self):
+        self.review_transfer_button.click()
+
+    def make_transfer(
+        self,
+        from_account,
+        to_account,
+        amount,
+    ):
+        self.select_from_account(from_account)
+        self.select_to_account(to_account)
+        self.enter_amount(amount)
+        self.select_today()
+        self.click_review_transfer()
