@@ -6,6 +6,7 @@ from pages.transactions_page import TransactionPage
 def test_transaction_page_is_displayed(authenticated_page: Page):
     transaction_page = TransactionPage(authenticated_page)
 
+   #Start Transaction
     transaction_page.open_transactions()
     transaction_page.search_transaction("Amazon")
     transaction_page.select_account("Everyday Checking")
