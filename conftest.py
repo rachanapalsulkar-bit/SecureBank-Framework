@@ -1,46 +1,45 @@
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import sync_playwright
+from pages.signup_page import SignupPage
+from pages.accountinfo_page import AccountInfoPage
 
 
 @pytest.fixture
-def browser_context_args(browser_context_args):
-    """Automatically injects config arguments into the Playwright browser context."""
-    return {
-        **browser_context_args,
-        "ignore_https_errors": True  # <-- THIS BYPASSES THE SSL CERTIFICATE ERROR
-    }
+def page():
 
+    with sync_playwright() as p:
 
-@pytest.fixture(scope="function")
-def authenticated_page(page: Page) -> Page:
-    page.goto(
-        "https://qaplayground.com/bank/login",
-        wait_until="domcontentloaded"
+        browser = p.chromium.launch(
+            headless=False,
+            slow_mo=500
+        )
+        page = browser.new_page()
+        yield page
+        #browser.close()
+
+@pytest.fixture
+def account_page(page):
+    signup = SignupPage(page)
+    signup.navigate()
+    signup.register_new_user("Rachana", "rachana.palsulkar@acldigital.com")
+    return AccountInfoPage(page)
+
+import uuid
+
+@pytest.fixture
+def unique_email():
+    return f"rachana_{uuid.uuid4().hex[:8]}@acldigital.com"
+
+@pytest.fixture
+def account_page(page, unique_email):
+
+    signup = SignupPage(page)
+
+    signup.navigate()
+
+    signup.signup(
+        "Rachana",
+        unique_email
     )
 
-    page.get_by_label(
-        "Username",
-        exact=True
-    ).fill("standard_user")
-
-    page.get_by_label(
-        "Password",
-        exact=True
-    ).fill("bank_sauce")
-
-    page.get_by_role(
-        "button",
-        name="Sign in to SecureBank"
-    ).click()
-
-    page.wait_for_load_state("networkidle")
-
-    expect(
-        page.get_by_text(
-            "standard_user",
-            exact=True
-        )
-    ).to_be_visible(timeout=15000)
-  
-    return page
-
+    return AccountInfoPage(page)
