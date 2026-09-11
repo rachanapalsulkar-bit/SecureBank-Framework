@@ -1,2 +1,0 @@
-Inside download_csv : <pages.transactions_page.TransactionPage object at 0x000002C3EAA2BCB0>
-Saving file to: downloads\transactions.csv

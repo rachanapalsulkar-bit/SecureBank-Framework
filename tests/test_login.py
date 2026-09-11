@@ -72,7 +72,7 @@ def test_login_and_capture_accounts(page):
     os.path.join(
         screenshot_dir,
         f"Accounts_After_Create_{current_time}.png"
-   )
+    )
 )
 
 print("All screenshots saved successfully!")

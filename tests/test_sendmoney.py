@@ -3,6 +3,7 @@ from playwright.sync_api import Page
 from pages.sendmoney_page import SendMoneyPage
 
 def test_send_money_page_is_displayed(authenticated_page: Page):
+    """Test 1: Simple validation that the landing page renders correctly."""
     sendmoney_page = SendMoneyPage(authenticated_page)
     sendmoney_page.open_send_money()
     
@@ -11,8 +12,10 @@ def test_send_money_page_is_displayed(authenticated_page: Page):
 
 
 def test_screenshot_sendmoney_with_new_payee(authenticated_page: Page):
+    """Test 2: Creates a new custom payee profile dynamically and processes transaction execution."""
     sendmoney_page = SendMoneyPage(authenticated_page)
-    sendmoney_page.open_send_money()  
+    sendmoney_page.open_send_money()
+    
     new_payee_data = {
         "name": "Rachana Palsulkar",
         "bank": "SBI Bank",
