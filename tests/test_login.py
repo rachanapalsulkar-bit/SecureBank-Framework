@@ -3,7 +3,7 @@ from datetime import datetime
 from pages.login_page import LoginPage
 from pages.accounts_page import AccountsPage
 from config.config import Config
-import allure
+import allure#
 current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 @allure.title("Login and Create Account")

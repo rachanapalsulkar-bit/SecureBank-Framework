@@ -22,7 +22,7 @@ def test_screenshot_payment_schedule(authenticated_page: Page):
         from_account="Everyday Checking",
         biller="City Electric Co.",
         amount="20.00",
-        payment_date="2026-08-27"
+        payment_date="2030-08-27"
     )
     
     # Saves the completed confirmation screen
