@@ -1,45 +1,44 @@
 import pytest
 from playwright.sync_api import sync_playwright
-from pages.signup_page import SignupPage
-from pages.accountinfo_page import AccountInfoPage
-
+from pages.products_page import ProductsPage
 
 @pytest.fixture
 def page():
-
     with sync_playwright() as p:
-
         browser = p.chromium.launch(
             headless=False,
-            slow_mo=500
+            slow_mo=300
         )
-        page = browser.new_page()
+        # Bypasses corporate VPN/SSL inspection blocks
+        browser_context = browser.new_context(ignore_https_errors=True)
+        page = browser_context.new_page()
+        
+        # Automatically launch homepage on every test start
+        page.goto("https://automationexercise.com/")
+        
         yield page
-        #browser.close()
+        browser.close()
 
 @pytest.fixture
-def account_page(page):
-    signup = SignupPage(page)
-    signup.navigate()
-    signup.register_new_user("Rachana", "rachana.palsulkar@acldigital.com")
-    return AccountInfoPage(page)
+def products_page(page):
+    return ProductsPage(page)
 
-import uuid
-
-@pytest.fixture
-def unique_email():
-    return f"rachana_{uuid.uuid4().hex[:8]}@acldigital.com"
-
-@pytest.fixture
-def account_page(page, unique_email):
-
-    signup = SignupPage(page)
-
-    signup.navigate()
-
-    signup.signup(
-        "Rachana",
-        unique_email
+@pytest.fixture(autouse=True)
+def block_ads(page):
+    page.route(
+        "**/*",
+        lambda route: (
+            route.abort()
+            if any(
+                ad_domain in route.request.url
+                for ad_domain in [
+                    "googlesyndication.com",
+                    "doubleclick.net",
+                    "googleads.g.doubleclick.net",
+                    "adservice.google.com",
+                ]
+            )
+            else route.continue_()
+        ),
     )
-
-    return AccountInfoPage(page)
+    yield

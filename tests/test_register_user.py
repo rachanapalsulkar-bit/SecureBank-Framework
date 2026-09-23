@@ -1,19 +1,18 @@
-from playwright.sync_api import expect
+from playwright.sync_api import expect, Page
+from pages.base_page import BasePage
+from pages.login_page import LoginPage
 from pages.accountinfo_page import AccountInfoPage
-from pages.signup_page import SignupPage
 from utils.data_generator import DataGenerator
 
-
-def test_register_user(page):
-    signup_page = SignupPage(page)
+def test_register_user(page: Page):
+    login_page = LoginPage(page)
     unique_email = DataGenerator.generate_email()
 
-
-    signup_page.navigate()
-    signup_page.signup("Rachana", unique_email)
-
+    login_page.navigate()
+    login_page.register_new_user("Rachana", unique_email)
 
     expect(page.locator("text=Enter Account Information")).to_be_visible(timeout=10000)
+    
     account_page = AccountInfoPage(page)
     account_page.enter_account_information(
         password="Password123!",
@@ -35,7 +34,6 @@ def test_register_user(page):
 
     page.screenshot(path="screenshots/before_create_account.png")
     account_page.click_create_account()
-
 
     expect(page.locator("text=Account Created!")).to_be_visible(timeout=10000)
     page.screenshot(path="screenshots/account_created.png")
